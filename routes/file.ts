@@ -93,7 +93,7 @@ router.post("/email", async (req, res) => {
   const { id, emailFrom, emailTo } = req.body;
 
   if (!id || !emailFrom || !emailTo)
-    return res.status(400).json({ message: "Invalid data" });
+    return res.status(400).json({ message: "All field required" });
 
   // 2. Check if the file exists
   const file = await File.findById(id);
@@ -101,6 +101,9 @@ router.post("/email", async (req, res) => {
   if (!file) {
     return res.status(404).json({ message: "File does not exit" });
   }
+
+  if (file.sender)
+    return res.status(400).json({ message: "File is already send" });
 
   // 3. create tranporter
   let transporter = nodemailer.createTransport({
